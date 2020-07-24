@@ -11,6 +11,16 @@ function afficherClients(start, size, callback) {
     });
 }
 
+function rechercherClients(nom, callback) {
+    request('https://antoine-hotel-web-api.herokuapp.com/clients/recherche/' + nom, { json: true }, function (err, res, body) {
+        if (err) {
+            callback('Erreur');
+        }
+        // body contient les données récupérées
+        callback(body);
+    });
+}
+
 function ajouterClient(nom, prenom, callback) {
     var options = {
         json: true,
@@ -21,7 +31,7 @@ function ajouterClient(nom, prenom, callback) {
     };
     request.post('https://antoine-hotel-web-api.herokuapp.com/clients', options, function (err, res, body) {
         if (err) {
-            callback('Erreur' + err);
+            callback(err);
         }
         // body contient les données récupérées
         callback(body);
@@ -30,3 +40,4 @@ function ajouterClient(nom, prenom, callback) {
 
 exports.afficherClients = afficherClients;
 exports.ajouterClient = ajouterClient;
+exports.rechercherClients = rechercherClients;
