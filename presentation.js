@@ -1,5 +1,6 @@
 // service.js
-const service = require('./service');
+const serviceClass = require('./service');
+const service = new serviceClass();
 // récupération du module `readline`
 const readline = require('readline');
 // création d'un objet `rl` permettant de récupérer la saisie utilisateur
@@ -30,7 +31,7 @@ const start = () => {
             console.log("Mauvause entrée, veuillez choisir un nombre valide.");
             start();
         }
-        
+
     });
 }
 
