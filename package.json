@@ -20,6 +20,7 @@
   "homepage": "https://github.com/AntoineLabeeuw/hotel-app-console#readme",
   "dependencies": {
     "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
     "wait-for-user-input": "^1.0.0"
   }
 }

@@ -1,63 +1,75 @@
-// récupération du module `readline`
-var readline = require('readline');
 // service.js
-var service = require('./service');
+const service = require('./service');
+// récupération du module `readline`
+const readline = require('readline');
 // création d'un objet `rl` permettant de récupérer la saisie utilisateur
-var rl = readline.createInterface({
+const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-// menu
-// https://stackoverflow.com/questions/24464404/how-to-readline-infinitely-in-node-js
-// https://jttan.com/blog/nodereadline/
-function start() {
-    rl.question('** Administration Hotel **\n'
-        + "1. Lister les clients\n"
-        + "2. Ajouter un client\n"
-        + "3. Rechercher des clients par nom\n"
-        + "99. Sortir\n\n"
-        + "Choisir une action : ...\n"
-        , function (line) {
 
-            switch (line) {
-                case "1":
-                    // service.afficherClients();
-                    service.afficherClients(0, 10, data => data.forEach(element => console.log('\x1b[33m%s %s\x1b[0m', element.nom, element.prenoms)));
-                    // demande ici start et size
-                    // retourne les clients, et c'est une liste que presentation affiche avec console.log
-                    break;
-                case "2":
-                    // service.ajouterClient
-                    rl.question('Nom du client a ajouter ?', function (nom) {
-                        rl.question('Prénom du client a ajouter ?', function (prenom) {
-                            service.ajouterClient(nom, prenom, function (data) {
-                                console.log('\x1b[33m%s\x1b[0m', "Client (" + data.nom + " " + data.prenoms + ") crée avec l'uuid : " + data.uuid);
-                            }, function (err) {
-                                console.log('Erreur', err);
-                            })
-                        })
-                    });
-                    break;
-                case "3":
-                    console.log("numero 3");
-                    // service.rechercherClients(nom)
-                    // demande les infos ici, et les envoie a service.
-                    rl.question('Nom du client à rechercher ?', function (nom) {
-                        service.rechercherClients(nom, function (data) {
-                            console.log(data);
-                        }, function (err) {
-                            console.log('Erreur', err);
-                        })
-                    });
-                    break;
-                case "99":
-                    return rl.close();
-                    // fin
-                    break;
-                default:
-                    console.log("Choisissez un nombre valide");
-            }
+// menu avec config pour l'affichage
+// refactor pour suivre exemple de Khalil
+const config = {
+    1: { libelle: 'Lister les clients', fn: menuListerClients },
+    2: { libelle: 'Ajouter un client', fn: menuAjouterClient },
+    3: { libelle: 'Rechercher des clients par nom', fn: menuRechercherParNom },
+    99: { libelle: 'Sortir', fn: menuQuitter }
+};
+
+const start = () => {
+    console.log(`** Administration Hotel **`);
+    for (const choix in config) {
+        console.log(choix + ". " + config[choix].libelle);
+    }
+    rl.question('Quelle action choisissez-vous ? : ', saisie => {
+        choix = parseInt(saisie);
+        try {
+            config[choix].fn(rl);
+        } catch (error) {
+            console.log("Mauvause entrée, veuillez choisir un nombre valide.");
+            start();
+        }
+        
+    });
+}
+
+function menuListerClients(rl) {
+    rl.question('Combien de clients voulez-vous afficher ? ', size => {
+        console.log('>> Liste des clients');
+        const clients$ = service.afficherClients(0, size);
+        clients$
+            .then(clients => console.log(clients))
+            .catch(err => console.log(`Erreur lors du listing des clients. Raison ${err}`));
+        start();
+    });
+}
+
+function menuAjouterClient(rl) {
+    rl.question('nom:', nom => {
+        rl.question('prenoms:', prenoms => {
+            const clients$ = service.ajouterClient(nom, prenoms);
+            clients$
+                .then(client => console.log('\x1b[33m%s\x1b[0m', `Client (${client.nom} ${client.prenoms}) crée avec l'uuid : ${client.uuid}`))
+                .catch(err => console.log(`Erreur lors de l'ajout du client. Raison ${err}`));
             start();
         });
-};
+    });
+}
+
+function menuRechercherParNom(rl) {
+    rl.question('Nom du client à rechercher ?', nom => {
+        const clients$ = service.rechercherClients(nom);
+        clients$
+            .then(clients => console.log(clients))
+            .catch(err => console.log(`Erreur lors de l'affichage du(des) client(s). Raison ${err}`));
+        start();
+    });
+}
+
+function menuQuitter(rl) {
+    console.log(`Au revoir`);
+    rl.close();
+}
+
 exports.start = start;

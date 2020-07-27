@@ -1,41 +1,25 @@
 // import request
-var request = require('request');
+const request = require('request-promise-native');
 
-function afficherClients(start, size, callback) {
-    request('https://antoine-hotel-web-api.herokuapp.com/clients?start=' + start + '&size=' + size, { json: true }, function (err, res, body) {
-        if (err) {
-            callback('Erreur');
-        }
-        // body contient les données récupérées
-        callback(body);
-    });
+function afficherClients(start, size) {
+    return request(`https://antoine-hotel-web-api.herokuapp.com/clients?start=${start}&size=${size}`, { json: true })
+        .then(clients => clients.map(client => `${client['prenoms']} ${client['nom']}`));
 }
 
-function rechercherClients(nom, callback) {
-    request('https://antoine-hotel-web-api.herokuapp.com/clients/recherche/' + nom, { json: true }, function (err, res, body) {
-        if (err) {
-            callback('Erreur');
-        }
-        // body contient les données récupérées
-        callback(body);
-    });
+function rechercherClients(nom) {
+    return request(`https://antoine-hotel-web-api.herokuapp.com/clients/recherche/${nom}`, { json: true })
+        .then(clients => client);
 }
 
-function ajouterClient(nom, prenom, callback) {
-    var options = {
+function ajouterClient(nom, prenom) {
+    const options = {
         json: true,
         json: {
             "nom": nom,
             "prenoms": prenom
         }
     };
-    request.post('https://antoine-hotel-web-api.herokuapp.com/clients', options, function (err, res, body) {
-        if (err) {
-            callback(err);
-        }
-        // body contient les données récupérées
-        callback(body);
-    });
+    return request.post(`https://antoine-hotel-web-api.herokuapp.com/clients`, options);
 }
 
 exports.afficherClients = afficherClients;

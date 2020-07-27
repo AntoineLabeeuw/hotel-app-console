@@ -1,2 +1,2 @@
-var presentation = require("./presentation")
-var start = presentation.start(); 
+const presentation = require("./presentation")
+const start = presentation.start(); 
