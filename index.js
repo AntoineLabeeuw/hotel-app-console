@@ -1,2 +1,3 @@
-const presentation = require("./presentation")
-const start = presentation.start(); 
+"use strict";
+var presentation = require("./presentation");
+var menu = presentation.start();
