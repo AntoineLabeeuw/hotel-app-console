@@ -1,2 +1,2 @@
-const presentation = require("./presentation")
-const menu = presentation.start(); 
+import { start } from './presentation';
+const menu = start(); 

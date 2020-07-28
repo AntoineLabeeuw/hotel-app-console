@@ -1,17 +1,17 @@
-// import request
 import request from 'request-promise-native';
-class Service {
-    afficherClients(start:number, size:number) {
+import { Client } from './domain';
+export class Service {
+    constructor() {};
+    afficherClients(start: number, size: number) {
         return request(`https://antoine-hotel-web-api.herokuapp.com/clients?start=${start}&size=${size}`, { json: true })
-            .then(clients => clients.map(((client:any)  => `${client['prenoms']} ${client['nom']}`)));
+            .then(clients => clients.map(((client: Client) => `${client.prenoms} ${client.nom}`)));
     }
-    rechercherClients(nom: any) {
+    rechercherClients(nom: string) {
         return request(`https://antoine-hotel-web-api.herokuapp.com/clients/recherche/${nom}`, { json: true })
-            .then(clients => clients.map(((client:any) => `${client['prenoms']} ${client['nom']}`)));
+            .then(clients => clients.map(((client: Client) => `${client.prenoms} ${client.nom}`)));
     }
-    ajouterClient(nom: any, prenom: any) {
+    ajouterClient(nom: string, prenom: string) {
         const options = {
-            //json: true,
             json: {
                 "nom": nom,
                 "prenoms": prenom
@@ -22,4 +22,4 @@ class Service {
 }
 
 
-module.exports = Service;
+//module.exports = Service;

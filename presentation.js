@@ -1,11 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.start = void 0;
 // service.js
-var serviceClass = require('./service');
-var service = new serviceClass();
+var service_1 = require("./service");
+var service = new service_1.Service();
 // récupération du module `readline`
-var readline = require('readline');
+var readline_1 = __importDefault(require("readline"));
 // création d'un objet `rl` permettant de récupérer la saisie utilisateur
-var rl = readline.createInterface({
+var rl = readline_1.default.createInterface({
     input: process.stdin,
     output: process.stdout
 });
@@ -17,7 +22,7 @@ var config = {
     3: { libelle: 'Rechercher des clients par nom', fn: menuRechercherParNom },
     99: { libelle: 'Sortir', fn: menuQuitter }
 };
-var start = function () {
+exports.start = function () {
     console.log("** Administration Hotel **");
     for (var choix in config) {
         console.log(choix + ". " + config[choix].libelle);
@@ -29,7 +34,7 @@ var start = function () {
         }
         catch (error) {
             console.log("Mauvause entrée, veuillez choisir un nombre valide.");
-            start();
+            exports.start();
         }
     });
 };
@@ -40,7 +45,7 @@ function menuListerClients(rl) {
         clients$
             .then(function (clients) { return console.log(clients); })
             .catch(function (err) { return console.log("Erreur lors du listing des clients. Raison " + err); });
-        start();
+        exports.start();
     });
 }
 function menuAjouterClient(rl) {
@@ -48,9 +53,9 @@ function menuAjouterClient(rl) {
         rl.question('prenoms:', function (prenoms) {
             var clients$ = service.ajouterClient(nom, prenoms);
             clients$
-                .then(function (client) { return console.log('\x1b[33m%s\x1b[0m', "Client (" + client.nom + " " + client.prenoms + ") cr\u00E9e avec l'uuid : " + client.uuid); })
+                .then((function (client) { return console.log('\x1b[33m%s\x1b[0m', "Client (" + client.nom + " " + client.prenoms + ") cr\u00E9e avec l'uuid : " + client.uuid); }))
                 .catch(function (err) { return console.log("Erreur lors de l'ajout du client. Raison " + err); });
-            start();
+            exports.start();
         });
     });
 }
@@ -60,11 +65,10 @@ function menuRechercherParNom(rl) {
         clients$
             .then(function (clients) { return console.log(clients); })
             .catch(function (err) { return console.log("Erreur lors de l'affichage du(des) client(s). Raison " + err); });
-        start();
+        exports.start();
     });
 }
 function menuQuitter(rl) {
     console.log("Au revoir");
     rl.close();
 }
-exports.start = start;
